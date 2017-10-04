@@ -1,0 +1,60 @@
+def loop1():
+  ### 
+  set_standard_analog_input_domain(0, 1)
+  set_standard_analog_input_domain(1, 1)
+  set_tool_analog_input_domain(0, 1)
+  set_tool_analog_input_domain(1, 1)
+  set_analog_outputdomain(0, 0)
+  set_analog_outputdomain(1, 0)
+  set_tool_voltage(0)
+  set_input_actions_to_default()
+  set_tcp(p[0.0,0.0,0.0,0.0,0.0,0.0])
+  set_payload(0.0)
+  set_gravity([0.0, 0.0, 9.82])
+
+  while (True):
+    $ 1 "Tom's Test Program"
+    $ 2 "Get"
+    count = 0
+    while (count < 2):
+      $ 3 "Get Random Number (1-100)"
+      num = floor(random() * 100)
+      $ 4 "Say Hello"
+      messageStr = "Hello, " + num
+      if (count  == 1):
+      	popup(messageStr, "Hey, it's a title!")
+      elif (count == 2):
+      	popup(messageStr, "Whoa, this doesn't look good", warning=true)
+      elif (count == 3):
+      	popup(messageStr, "Uh oh", error=true)
+      else
+      	pop("How did you get here?", "Whaaaat")
+      end
+
+      count = count + 1
+    end
+
+    $ 5 "Log Message"
+    textmsg("Test Log 1 ", "Test Log 2\n")
+    $ 6 "Get a pose for each corner"
+    count = 3
+    poses = []
+    while (count < 3):
+    	teach_mode()
+    	popup("Arm Placed?", "Count: " + count)
+    	poses[count] = get_target_tcp_pose()
+    	end_teach_mode()
+    end
+    $ 7 "Write corner poses to log"
+    textmsg(poses)
+    #textmsg(poses[0], poses[1], poses[2], poses[3]) # dunno if this is needed over above
+    $ 8 "Wait 2.0s"
+
+    $ 9 "Move to top left pose"
+
+    movej(poses[0], a=1.4, v=1.05, t=0, r=0)
+
+    $ 10 "That's all"
+    halt
+  end
+end
